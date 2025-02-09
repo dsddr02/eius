@@ -1429,17 +1429,6 @@ function surge(content, url) {
 	return 输出内容;
 }
 
-/**
- * [js-sha256]{@link https://github.com/emn178/js-sha256}
- * 
- * @version 0.11.0 (modified by cmliu)
- * @description 本代码基于 js-sha256 项目改编，添加了 SHA-224 哈希算法的实现。
- * @author Chen, Yi-Cyuan [emn178@gmail.com], modified by cmliu
- * @copyright Chen, Yi-Cyuan 2014-2024
- * @license MIT
- * 
- * @modifications 重写并实现了 sha224 函数，引用请注明出处。修改日期：2024-12-04，Github：cmliu
- */
 function sha224(输入字符串) {
 	// 内部常量和函数
 	const 常量K = [
