@@ -70,7 +70,7 @@ export default {
 
 			const fakeHostName = `${fakeUserIDMD5.slice(6, 9)}.${fakeUserIDMD5.slice(13, 19)}`;
 
-			proxyIP = env.ppp || env.proxyip || proxyIP;
+			proxyIP = env.hhh || env.proxyip || proxyIP;
 			proxyIPs = await ADD(proxyIP);
 			proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
 
@@ -98,7 +98,7 @@ export default {
 			}
 
 			const upgradeHeader = request.headers.get("Upgrade");
-			const url = new dfl(request.url);
+			const url = new URL(request.url);
 			if (!upgradeHeader || upgradeHeader !== "websocket") {
 				if (env.ADD) addresses = await ADD(env.ADD);
 				if (env.ADDAPI) addressesapi = await ADD(env.ADDAPI);
@@ -134,8 +134,8 @@ export default {
 				}
 				switch (url.pathname) {
 					case '/':
-						if (env.dfl302) return Response.redirect(env.dfl302, 302);
-						else if (env.dfl) return await proxyURL(env.dfl, url);
+						if (env.URL302) return Response.redirect(env.URL302, 302);
+						else if (env.URL) return await proxyURL(env.URL, url);
 						else return new Response(JSON.stringify(request.cf, null, 4), {
 							status: 200,
 							headers: {
@@ -182,8 +182,8 @@ export default {
 							});
 						}
 					default:
-						if (env.dfl302) return Response.redirect(env.dfl302, 302);
-						else if (env.dfl) return await proxyURL(env.dfl, url);
+						if (env.URL302) return Response.redirect(env.URL302, 302);
+						else if (env.URL) return await proxyURL(env.URL, url);
 						else return new Response('不用怀疑！你ttt就是错的！！！', { status: 404 });
 				}
 			} else {
@@ -611,10 +611,10 @@ async function ADD(内容) {
 async function proxyURL(proxyURL, url) {
 	const URLs = await ADD(proxyURL);
 	const fullURL = URLs[Math.floor(Math.random() * URLs.length)];
-	// 解析目标 dfl
-	let parsedURL = new dfl(fullURL);
+	// 解析目标 URL
+	let parsedURL = new URL(fullURL);
 	console.log(parsedURL);
-	// 提取并可能修改 dfl 组件
+	// 提取并可能修改 URL 组件
 	let URLProtocol = parsedURL.protocol.slice(0, -1) || 'https';
 	let URLHostname = parsedURL.hostname;
 	let URLPathname = parsedURL.pathname;
@@ -624,7 +624,7 @@ async function proxyURL(proxyURL, url) {
 		URLPathname = URLPathname.slice(0, -1);
 	}
 	URLPathname += url.pathname;
-	// 构建新的 dfl
+	// 构建新的 URL
 	let newURL = `${URLProtocol}://${URLHostname}${URLPathname}${URLSearch}`;
 	// 反向代理请求
 	let response = await fetch(newURL);
@@ -634,10 +634,10 @@ async function proxyURL(proxyURL, url) {
 		statusText: response.statusText,
 		headers: response.headers
 	});
-	// 添加自定义头部，包含 dfl 信息
+	// 添加自定义头部，包含 URL 信息
 	//newResponse.headers.set('X-Proxied-By', 'Cloudflare Worker');
-	//newResponse.headers.set('X-Original-dfl', fullURL);
-	newResponse.headers.set('X-New-dfl', newURL);
+	//newResponse.headers.set('X-Original-URL', fullURL);
+	newResponse.headers.set('X-New-URL', newURL);
 	return newResponse;
 }
 
@@ -787,12 +787,12 @@ async function get特洛伊Config(password, hostName, sub, UA, RproxyIP, _url, f
 			if (enableSocks) 订阅器 += `CFCDN（访问方式）: Socks5<br>&nbsp;&nbsp;${newSocks5s.join('<br>&nbsp;&nbsp;')}<br>${socks5List}`;
 			else if (proxyIP && proxyIP != '') 订阅器 += `CFCDN（访问方式）: ProxyIP<br>&nbsp;&nbsp;${proxyIPs.join('<br>&nbsp;&nbsp;')}<br>`;
 			else if (RproxyIP == 'true') 订阅器 += `CFCDN（访问方式）: 自动获取ProxyIP<br>`;
-			else 订阅器 += `CFCDN（访问方式）: 无法访问, 需要您设置 proxyIP/ppp ！！！<br>`
+			else 订阅器 += `CFCDN（访问方式）: 无法访问, 需要您设置 proxyIP/hhh ！！！<br>`
 			订阅器 += `<br>SUB（优选订阅生成器）: ${sub}`;
 		} else {
 			if (enableSocks) 订阅器 += `CFCDN（访问方式）: Socks5<br>&nbsp;&nbsp;${newSocks5s.join('<br>&nbsp;&nbsp;')}<br>${socks5List}`;
 			else if (proxyIP && proxyIP != '') 订阅器 += `CFCDN（访问方式）: ProxyIP<br>&nbsp;&nbsp;${proxyIPs.join('<br>&nbsp;&nbsp;')}<br>`;
-			else 订阅器 += `CFCDN（访问方式）: 无法访问, 需要您设置 proxyIP/ppp ！！！<br>`;
+			else 订阅器 += `CFCDN（访问方式）: 无法访问, 需要您设置 proxyIP/hhh ！！！<br>`;
 			let 判断是否绑定KV空间 = '';
 			if (env.KV) 判断是否绑定KV空间 = ` <a href='${_url.pathname}/edit'>编辑优选列表</a>`;
 			订阅器 += `<br>您的订阅内容由 内置 addresses/ADD* 参数变量提供${判断是否绑定KV空间}<br>`;
@@ -827,7 +827,7 @@ async function get特洛伊Config(password, hostName, sub, UA, RproxyIP, _url, f
 					<strong>3.</strong> 快速切换 <a href='${atob('aHR0cHM6Ly9naXRodWIuY29tL2NtbGl1L1dvcmtlclZsZXNzMnN1Yg==')}'>优选订阅生成器</a> 至：sub.google.com，您可将"?sub=sub.google.com"参数添加到链接末尾，例如：<br>
 					&nbsp;&nbsp;https://${proxyhost}${hostName}/${password}<strong>?sub=sub.google.com</strong><br>
 					<br>
-					<strong>4.</strong> 快速更换 ppp 至：proxyip.cmliussss.net:443，您可将"?proxyip=proxyip.cmliussss.net:443"参数添加到链接末尾，例如：<br>
+					<strong>4.</strong> 快速更换 hhh 至：proxyip.cmliussss.net:443，您可将"?proxyip=proxyip.cmliussss.net:443"参数添加到链接末尾，例如：<br>
 					&nbsp;&nbsp; https://${proxyhost}${hostName}/${password}<strong>?proxyip=proxyip.cmliussss.net:443</strong><br>
 					<br>
 					<strong>5.</strong> 快速更换 SOCKS5 至：user:password@127.0.0.1:1080，您可将"?socks5=user:password@127.0.0.1:1080"参数添加到链接末尾，例如：<br>
@@ -1309,7 +1309,7 @@ async function getAddressesapi(api) {
 				} else {
 					// 验证当前apiUrl是否带有'proxyip=true'
 					if (api[index].includes('proxyip=true')) {
-						// 如果dfl带有'proxyip=true'，则将内容添加到proxyIPPool
+						// 如果URL带有'proxyip=true'，则将内容添加到proxyIPPool
 						proxyIPPool = proxyIPPool.concat((await ADD(content)).map(item => {
 							const baseItem = item.split('#')[0] || item;
 							if (baseItem.includes(':')) {
@@ -1391,7 +1391,7 @@ async function getAddressescsv(tls) {
 					const formattedAddress = `${ipAddress}:${port}#${dataCenter}`;
 					newAddressescsv.push(formattedAddress);
 					if (csvUrl.includes('proxyip=true') && columns[tlsIndex].toUpperCase() == 'true' && !httpsPorts.includes(port)) {
-						// 如果dfl带有'proxyip=true'，则将内容添加到proxyIPPool
+						// 如果URL带有'proxyip=true'，则将内容添加到proxyIPPool
 						proxyIPPool.push(`${ipAddress}:${port}`);
 					}
 				}
@@ -1428,6 +1428,7 @@ function surge(content, url) {
 	输出内容 = `#!MANAGED-CONFIG ${url} interval=86400 strict=false` + 输出内容.substring(输出内容.indexOf('\n'));
 	return 输出内容;
 }
+
 
 function sha224(输入字符串) {
 	// 内部常量和函数
